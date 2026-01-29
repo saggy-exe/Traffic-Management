@@ -1,3 +1,8 @@
+# =========================
+# PHASE 1: BASELINE SIMULATION
+# Original repository code
+# =========================
+
 # LAG
 # NO. OF VEHICLES IN SIGNAL CLASS
 # stops not used
