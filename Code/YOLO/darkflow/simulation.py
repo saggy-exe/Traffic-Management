@@ -19,6 +19,18 @@ import threading
 import pygame
 import sys
 import os
+import cv2
+
+# =========================
+# PHASE 2: VIDEO INPUT SETUP
+# =========================
+video_path = "videos/intersection.mp4"
+cap = cv2.VideoCapture(video_path)
+
+if not cap.isOpened():
+    print("ERROR: Video not found or cannot be opened")
+else:
+    print("Video feed initialized")
 
 # options={
 #    'model':'./cfg/yolo.cfg',     #specifying the path of model
@@ -285,7 +297,8 @@ def initialize():
 def setTime():
     global noOfCars, noOfBikes, noOfBuses, noOfTrucks, noOfRickshaws, noOfLanes
     global carTime, busTime, truckTime, rickshawTime, bikeTime
-    os.system("say detecting vehicles, "+directionNumbers[(currentGreen+1)%noOfSignals])
+    # os.system("say detecting vehicles, "+directionNumbers[(currentGreen+1)%noOfSignals])
+    print("Detecting vehicles for direction:", directionNumbers[(currentGreen + 1) % noOfSignals])
 #    detection_result=detection(currentGreen,tfnet)
 #    greenTime = math.ceil(((noOfCars*carTime) + (noOfRickshaws*rickshawTime) + (noOfBuses*busTime) + (noOfBikes*bikeTime))/(noOfLanes+1))
 #    if(greenTime<defaultMinimum):
@@ -469,7 +482,15 @@ class Main:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-
+        # PHASE 2: READ VIDEO FRAME
+        # =========================
+        ret, frame = cap.read()
+        if not ret:
+            # restart video when it ends
+            cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = cap.read()
+        cv2.imshow("Traffic Video Feed", frame)
+        cv2.waitKey(1)
         screen.blit(background,(0,0))   # display background in simulation
         for i in range(0,noOfSignals):  # display signal and set timer according to current status: green, yello, or red
             if(i==currentGreen):
